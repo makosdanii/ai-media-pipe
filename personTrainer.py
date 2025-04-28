@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 import PosEstimationModule as pm
 
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 path = "videos/workOutMyself.mp4"
-cap = cv2.VideoCapture(path)
+# cap = cv2.VideoCapture(path)
 
 detector = pm.poseDetector()
 count = 0

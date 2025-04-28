@@ -1,0 +1,53 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+
+from sklearn.metrics import accuracy_score
+import pickle
+
+
+df = pd.read_csv("coord.csv")
+#print(df.head())
+#print(df[df["class"]=="sad"])
+
+x = df.drop("class", axis=1) #features
+y = df["class"] # target value
+
+x_train , x_test, y_train, y_test = train_test_split(x,y, test_size= 0.3, random_state=1234)
+
+pipelines = {
+        "lr" : make_pipeline(StandardScaler(), LogisticRegression()),
+        "rc": make_pipeline(StandardScaler(), RidgeClassifier()),
+        "rf" : make_pipeline(StandardScaler(), RandomForestClassifier()),
+        "gb": make_pipeline(StandardScaler(), GradientBoostingClassifier()), }
+
+
+fit_models = {}
+for algo, pipeline in pipelines.items():
+        model = pipeline.fit(x_train, y_train)
+        fit_models[algo] = model
+
+print(fit_models)
+print(fit_models["rc"].predict(x_test))
+
+
+
+for algo, model in fit_models.items():
+    yhat = model.predict(x_test)
+    print(algo, accuracy_score(y_test, yhat))
+
+print(fit_models['rf'].predict(x_test))
+print(y_test)
+
+
+with open('body_language.pkl', 'wb') as f:
+    pickle.dump(fit_models['rf'], f)
+'''
+with open('body_language.pkl', 'rb') as f:
+    model = pickle.load(f)
+print(model)'''

@@ -7,8 +7,8 @@ mpPose = mp.solutions.pose
 pose = mpPose.Pose()
 
 wCam, hCam = 640, 480
-# cap = cv2.VideoCapture('videos/body.mp4')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('C:\\output\\jupyter\\ai-media-pipe\\videos\\workOutMyself.mp4')
+#cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
 cap.set(4, hCam)
 

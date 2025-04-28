@@ -3,7 +3,7 @@ import mediapipe as mp
 import time
 import math
 
-
+print("Pose Estimation Module Loaded")
 class poseDetector():
     def __init__(self, mode=False, smooth=True, detectionCon=0.5, trackCon=0.5):
         self.mode = mode
