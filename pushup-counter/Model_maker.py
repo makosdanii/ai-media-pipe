@@ -28,12 +28,16 @@ drawing_spec_CF = mp_drawing.DrawingSpec(thickness=1, circle_radius=2, color = (
 class_name = "PUSHup" #CHANGE THIS CLASS NAME AND RESHOOT
 cap = cv2.VideoCapture(0)
 
-########################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!##########################################
-#THEN RUN THIS CODE
-
 # Initiate holistic model
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-
+    lms = sorted([11, 13, 15, 23, 25, 27, 12, 14, 16, 24, 26, 28])
+    Landmarks = ["class"]
+    for val in lms:
+        Landmarks += ["x{}".format(val), "y{}".format(val), "z{}".format(val), "v{}".format(val)]
+    with open("coord.csv", mode="w", newline="") as f:
+        csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
+        csv_writer.writerow(Landmarks)
+                        
     while True:
         ret,frame = cap.read()
         height , width,_ = frame.shape
@@ -45,13 +49,9 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         result = holistic.process(rgb_frame)
         # print(results.face_landmarks)
 
-        # face_landmarks, pose_landmarks, left_hand_landmarks, right_hand_landmarks
-
         # Recolor image back to BGR for rendering
         rgb_frame.flags.writeable = True
         rgb_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2BGR)
-
-
 
         mp_drawing.draw_landmarks(rgb_frame, result.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
 
@@ -59,7 +59,6 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
         mp_drawing.draw_landmarks(rgb_frame, result.pose_landmarks, mp_holistic.POSE_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
 
-        lms = [11, 13, 15, 23, 25, 27, 12, 14, 16, 24, 26, 28]
         # Export coordinates
         try:
             # Extract Pose landmarks
@@ -88,7 +87,3 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
 cap.release()
 cv2.destroyAllWindows()
-
-##########################################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!###########################################
-#############
-#then run the main code
