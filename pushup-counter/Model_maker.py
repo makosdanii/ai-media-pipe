@@ -58,10 +58,9 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         mp_drawing.draw_landmarks(rgb_frame,result.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
 
         mp_drawing.draw_landmarks(rgb_frame, result.pose_landmarks, mp_holistic.POSE_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
-        foo = result.pose_landmarks.landmark
+        pose = result.pose_landmarks.landmark
         # Export coordinates
-        pose = [foo[i-1] for i in lms]
-        #pose = list(filter(lambda m: m[0] in lms, pose))
+        pose = [pose[i-1] for i in lms]
         pose_row = list(np.array([[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in pose]).flatten())
 
         # Concate rows
