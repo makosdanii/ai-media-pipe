@@ -15,6 +15,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
 from sklearn.metrics import accuracy_score
 import pickle
+import argparse
 
 
 #MP CONFIGS
@@ -25,8 +26,10 @@ mp_holistic= mp.solutions.holistic
 drawing_spec_LF = mp_drawing.DrawingSpec(thickness=2, circle_radius=1, color = (3, 252, 244))
 drawing_spec_CF = mp_drawing.DrawingSpec(thickness=1, circle_radius=2, color = (251, 255, 122))
 
-class_name = "PUSHup" #CHANGE THIS CLASS NAME AND RESHOOT
-cap = cv2.VideoCapture(0)
+parser = argparse.ArgumentParser()
+parser.add_argument('--position', type=str, required=True)
+class_name = parser.parse_args().position
+cap = cv2.VideoCapture(1)
 
 # Initiate holistic model
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -34,9 +37,10 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
     Landmarks = ["class"]
     for val in lms:
         Landmarks += ["x{}".format(val), "y{}".format(val), "z{}".format(val), "v{}".format(val)]
-    #with open("coord.csv", mode="w", newline="") as f:
-        #csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
-        #csv_writer.writerow(Landmarks)
+    if class_name == "PUSHup":
+        with open("coord.csv", mode="w", newline="") as f:
+            csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
+            csv_writer.writerow(Landmarks)
                         
     while True:
         ret,frame = cap.read()
@@ -58,6 +62,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         mp_drawing.draw_landmarks(rgb_frame,result.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
 
         mp_drawing.draw_landmarks(rgb_frame, result.pose_landmarks, mp_holistic.POSE_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
+
         pose = result.pose_landmarks.landmark
         # Export coordinates
         pose = [pose[i-1] for i in lms]
@@ -70,8 +75,6 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         row.insert(0, class_name)
         try:
             # Extract Pose landmarks
-            if not os.path.exists('coord.csv'):
-                print("Fuck")
             # Export to CSV
             with open('coord.csv', mode='a', newline='') as f:
                 csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
