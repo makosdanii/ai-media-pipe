@@ -21,29 +21,19 @@ y = df["class"] # target value
 x_train , x_test, y_train, y_test = train_test_split(x,y, test_size= 0.3, random_state=1234)
 
 pipelines = {
-        "lr" : make_pipeline(StandardScaler(), LogisticRegression()),
-        "rc": make_pipeline(StandardScaler(), RidgeClassifier()),
-        "rf" : make_pipeline(StandardScaler(), RandomForestClassifier()),
-        "gb": make_pipeline(StandardScaler(), GradientBoostingClassifier()), }
-
+        #"lr" : make_pipeline(StandardScaler(), LogisticRegression()),
+        #"rc": make_pipeline(StandardScaler(), RidgeClassifier()),
+        #"gb": make_pipeline(StandardScaler(), GradientBoostingClassifier()),
+        "rf" : make_pipeline(StandardScaler(), RandomForestClassifier()),}
 
 fit_models = {}
 for algo, pipeline in pipelines.items():
         model = pipeline.fit(x_train, y_train)
         fit_models[algo] = model
 
-print(fit_models)
-print(fit_models["rc"].predict(x_test))
-
-
-
 for algo, model in fit_models.items():
     yhat = model.predict(x_test)
     print(algo, accuracy_score(y_test, yhat))
-
-print(fit_models['rf'].predict(x_test))
-print(y_test)
-
 
 with open('body_language.pkl', 'wb') as f:
     pickle.dump(fit_models['rf'], f)
