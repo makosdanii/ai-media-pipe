@@ -16,6 +16,8 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 import pickle
 
+
+
 #MP CONFIGS
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic= mp.solutions.holistic
@@ -61,12 +63,15 @@ for algo, model in fit_models.items():
 print(fit_models['rf'].predict(x_test))
 print(y_test)
 
+'''
+with open('body_language.pkl', 'wb') as f:
+    pickle.dump(fit_models['rf'], f)
+'''
 with open('body_language.pkl', 'rb') as f:
     model = pickle.load(f)
 print(model)
 
-counter = 0
-attempt = False
+
 with mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0.5) as holistic:
         while True:
                     #LOADING IMAGE
@@ -117,16 +122,20 @@ with mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0
 
 
                             row =  pose_row
+                            '''
+                            row.insert(0, class_name)
+                            print(row)
+                            #print(len(pose_row))
+                            #print(len(face_row))
+
+
+                            with open("coord.csv", mode="a", newline="") as f:
+                                    csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
+                                    csv_writer.writerow(row) '''
 
                             #make detection
                             X = pd.DataFrame([row])
                             body_language_class = model.predict(X)[0]
-                            if "PUSHDOWN" == body_language_class:
-                                attempt = True
-                            elif "PUSHup" == body_language_class:
-                                attempt = False
-                                counter += 1
-
                             body_language_prob = model.predict_proba(X)[0]
                             #print(body_language_class, body_language_prob)
 
@@ -147,12 +156,10 @@ with mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0
 
                             # Display Probability
                             cv2.putText(rgb_frame, 'PROB' , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (3, 12, 138), 1, cv2.LINE_AA)
-
                             cv2.putText(rgb_frame, str(round(body_language_prob[np.argmax(body_language_prob)],2)) , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (43,43,255), 2, cv2.LINE_AA)
-                            cv2.putText(rgb_frame, "Number of pushups: "+str(counter) , (10,400), cv2.FONT_HERSHEY_SIMPLEX, 1, (43,43,255), 2, cv2.LINE_AA)
-                            # if body_language_prob > 0.75:
-                            # else:
-                            #     cv2.putText(rgb_frame, "Get into position" , (100,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (43,43,255), 2, cv2.LINE_AA)
+
+
+
                         except:
                             pass
 

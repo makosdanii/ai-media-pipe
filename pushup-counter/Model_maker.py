@@ -34,9 +34,9 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
     Landmarks = ["class"]
     for val in lms:
         Landmarks += ["x{}".format(val), "y{}".format(val), "z{}".format(val), "v{}".format(val)]
-    with open("coord.csv", mode="w", newline="") as f:
-        csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
-        csv_writer.writerow(Landmarks)
+    #with open("coord.csv", mode="w", newline="") as f:
+        #csv_writer = csv.writer(f, delimiter=",", quotechar = '"', quoting = csv.QUOTE_MINIMAL)
+        #csv_writer.writerow(Landmarks)
                         
     while True:
         ret,frame = cap.read()
@@ -58,27 +58,29 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         mp_drawing.draw_landmarks(rgb_frame,result.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
 
         mp_drawing.draw_landmarks(rgb_frame, result.pose_landmarks, mp_holistic.POSE_CONNECTIONS, landmark_drawing_spec=drawing_spec_CF,connection_drawing_spec=drawing_spec_LF)
-
+        foo = result.pose_landmarks.landmark
         # Export coordinates
+        pose = [foo[i-1] for i in lms]
+        #pose = list(filter(lambda m: m[0] in lms, pose))
+        pose_row = list(np.array([[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in pose]).flatten())
+
+        # Concate rows
+        row = pose_row
+
+        # Append class name
+        row.insert(0, class_name)
         try:
             # Extract Pose landmarks
-            pose = result.pose_landmarks.landmark
-            pose = list(filter(lambda m: m[0] in lms, pose))
-            pose_row = list(np.array([[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in pose]).flatten())
-
-            # Concate rows
-            row = pose_row
-
-            # Append class name
-            row.insert(0, class_name)
-
+            if not os.path.exists('coord.csv'):
+                print("Fuck")
             # Export to CSV
             with open('coord.csv', mode='a', newline='') as f:
                 csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 csv_writer.writerow(row)
 
         except:
-            pass
+            import traceback
+            print(traceback.format_exc())
 
         cv2.imshow('Model Making Window', rgb_frame)
         cv2.waitKey(1)
