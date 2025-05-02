@@ -7,9 +7,7 @@ from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 
-
 df = pd.read_csv("coord.csv")
-
 #Features
 x = df.drop("class", axis=1)
 #Target value
