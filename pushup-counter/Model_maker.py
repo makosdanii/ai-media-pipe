@@ -3,6 +3,7 @@ import cv2
 import csv
 import numpy as np
 import argparse
+import traceback
 
 #MediaPipe configs
 mp_drawing = mp.solutions.drawing_utils
@@ -69,7 +70,6 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 csv_writer.writerow(row)
         except:
-            import traceback
             print(traceback.format_exc())
 
         cv2.imshow('Model Making Window', rgb_frame)
