@@ -4,11 +4,11 @@ import csv
 import numpy as np
 import argparse
 
-#MP CONFIGS
+#MediaPipe configs
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic= mp.solutions.holistic
 
-#DRWAING STYLES:
+#Drawing style for MediaPipe
 drawing_spec_LF = mp_drawing.DrawingSpec(thickness=2, circle_radius=1, color = (3, 252, 244))
 drawing_spec_CF = mp_drawing.DrawingSpec(thickness=1, circle_radius=2, color = (251, 255, 122))
 
