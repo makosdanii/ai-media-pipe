@@ -10,16 +10,16 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 import pickle
 
-
 df = pd.read_csv("coord.csv")
-#print(df.head())
-#print(df[df["class"]=="sad"])
 
-x = df.drop("class", axis=1) #features
-y = df["class"] # target value
+#Features
+x = df.drop("class", axis=1)
+#Target value
+y = df["class"]
 
 x_train , x_test, y_train, y_test = train_test_split(x,y, test_size= 0.3, random_state=1234)
 
+#Pipelines for models we tested
 pipelines = {
         #"lr" : make_pipeline(StandardScaler(), LogisticRegression()),
         #"rc": make_pipeline(StandardScaler(), RidgeClassifier()),
